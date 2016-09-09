@@ -1,0 +1,1 @@
+-l"./configPkg/linker.cmd" "./syslink_service.obj" "./syslink.obj" "./server.obj" "./resource_sync.obj" "./message_heap.obj" "./main_dsp.obj" "../Platform.lib" "../opencv/lib/cv.lib" "../opencv/lib/cxcore.lib" -l"libc.a" 

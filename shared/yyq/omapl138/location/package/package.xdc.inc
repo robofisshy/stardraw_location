@@ -1,0 +1,13 @@
+package.xdc
+Platform.xdc
+Platform.xs
+package/yyq.omapl138.location.sch
+package/.vers_g180
+package/.vers_r170
+package/.vers_b160
+package/.xdc-z52
+package/yyq_omapl138_location.java
+package/yyq_omapl138_location.class
+package/package_yyq.omapl138.location.c
+package/package.defs.h
+package/yyq.omapl138.location.ccs
