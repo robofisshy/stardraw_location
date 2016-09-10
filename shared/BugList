@@ -1,0 +1,17 @@
+######BugList
+
+######date:2016.9.10
+      The function ---Notify_sendEvent return a value -1.
+      I look up some data, and modify the code.
+      Modify the struct _Server in server.c,change it from 
+	struct _Server {
+    		SyslinkService *service;
+	};	to 	struct _Server {
+    					SyslinkService *service;
+    					ResourceSync *sync;
+					};
+      And then when the program go into the resource_sync_pair_wait(),
+      The function Notify_sendEvent() run successfully.
+      But I don't know where is different between the two program, when we 
+      init a ResourceSync* independently,it can not work.I just record it here,
+      wish I will figure it lately.

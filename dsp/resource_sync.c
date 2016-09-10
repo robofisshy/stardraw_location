@@ -39,6 +39,7 @@ ResourceSync *resource_sync_new(uint16_t proc_id, uint16_t line_id, uint32_t eve
     sync->sem = Semaphore_handle(&sync->sem_obj);
 
     if (Notify_registerEvent(proc_id, line_id, event_id, resource_sync_event_handle, (UArg)sync) < 0)
+    	while(1);
         //LOG_ERROR("fail to register event in %d:%d(line:event)", line_id, event_id);
 
     return sync;

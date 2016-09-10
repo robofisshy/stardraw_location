@@ -16,6 +16,7 @@
 
 struct _Server {
     SyslinkService *service;
+    ResourceSync *sync;
 };
 
 static void server_working(void *server_ptr); 
@@ -47,11 +48,11 @@ bool server_start(Server *server) {
 void server_working(void *server_ptr) {
     Server *server = (Server *)server_ptr;
 
-    ResourceSync *sync = resource_sync_new(syslink_service_host_id(server->service), 
+    server->sync = resource_sync_new(syslink_service_host_id(server->service),
             SYS_CFG_LINE_ID, SYS_CFG_EVT_ID_RESOURCE_SYNC, RESOURCE_SYNC_ID_SYNC);
 
     // wait sync object ready
-    if (! resource_sync_pair_wait(sync)) {
+    if (! resource_sync_pair_wait(server->sync)) {
      //   LOG_ERROR("fail to be synchronize with the slave resouce sync object");
         return;
     }
@@ -65,14 +66,12 @@ void server_working(void *server_ptr) {
     MessageQ_Params params;
     MessageQ_Params_init(&params);
     MessageQ_Handle msgq_capture = MessageQ_create(SYS_CFG_MSGQ_CAPTURE, &params);
-    resource_sync_post(sync, RESOURCE_SYNC_ID_SIGNAL_CAPTURE);
+    resource_sync_post(server->sync, RESOURCE_SYNC_ID_SIGNAL_CAPTURE);
 
     // open playback message queue to send image to arm
-    resource_sync_wait(sync, RESOURCE_SYNC_ID_SIGNAL_PLAYBACK);
+    resource_sync_wait(server->sync, RESOURCE_SYNC_ID_SIGNAL_PLAYBACK);
     MessageQ_QueueId msgq_playback;
     MessageQ_open(SYS_CFG_MSGQ_PLAYBACK, &msgq_playback);
-
-   // LazyFaceMarker *marker = lazy_face_marker_new(IMAGE_WIDTH, IMAGE_HEIGHT, IMAGE_BYTES_PER_PIX);
 
     while (1) {
         // wait capture message 
@@ -96,7 +95,7 @@ void server_working(void *server_ptr) {
     message_heap_destroy(heap);
     MessageQ_close(&msgq_playback);
     MessageQ_delete(&msgq_capture);
-    resource_sync_destroy(sync);
+    resource_sync_destroy(server->sync);
 
     server_destroy(server);
 }
